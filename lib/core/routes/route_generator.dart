@@ -33,7 +33,7 @@ final class RouteGenerator {
       case AppRoutes.register:
         return _slideRoute(RegistrationScreen(), settings);
       case AppRoutes.forgotPassword:
-        return _slideRoute(const ForgotPasswordScreen(), settings);
+        return _slideRoute(ForgotPasswordScreen(), settings);
 
       default:
         return _errorRoute();

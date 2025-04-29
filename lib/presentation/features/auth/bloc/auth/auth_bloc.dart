@@ -9,10 +9,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
     on<LoginUser>(_onLoginUser);
     on<RegisterUser>(_onRegisterUser);
+    on<ForgotPassword>(_onForgotPassword);
     on<LogoutUser>(_onLogoutUser);
   }
 
-  // Handle user login
   Future<void> _onLoginUser(LoginUser event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
@@ -28,7 +28,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  // Handle user registration
   Future<void> _onRegisterUser(
     RegisterUser event,
     Emitter<AuthState> emit,
@@ -39,10 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
       );
-
-      // Optional: Update the user's display name after registration
       await _auth.currentUser?.updateDisplayName(event.name);
-
       emit(AuthSuccess());
     } on FirebaseAuthException catch (e) {
       emit(AuthFailure(e.message ?? 'Registration failed'));
@@ -51,14 +47,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  // Handle user logout
-  Future<void> _onLogoutUser(LogoutUser event, Emitter<AuthState> emit) async {
+  Future<void> _onForgotPassword(
+    ForgotPassword event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(AuthLoading());
     try {
-      await _auth.signOut();
-      emit(AuthLoggedOut());
+      await _auth.sendPasswordResetEmail(email: event.email);
+      emit(PasswordResetSuccess());
+    } on FirebaseAuthException catch (e) {
+      emit(PasswordResetFailure(e.message ?? 'Password reset failed'));
     } catch (_) {
-      emit(AuthFailure('An unknown error occurred during logout'));
+      emit(PasswordResetFailure('An unknown error occurred'));
+    }
+  }
+
+  Future<void> _onLogoutUser(LogoutUser event, Emitter<AuthState> emit) async {
+    try {
+      await _auth.signOut();
+      emit(AuthInitial());
+    } catch (_) {
+      emit(AuthFailure('Logout failed'));
     }
   }
 }
