@@ -24,6 +24,7 @@ dependencies:
 
   #  Networking & API
   dio: ^5.8.0+1
+  flutter_dotenv: ^5.2.1
 
   #  UI & UX Enhancements
   flutter_screenutil: ^5.9.3
@@ -52,6 +53,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - .env
 
 
   # To add assets to your application, add an assets section, like this:
