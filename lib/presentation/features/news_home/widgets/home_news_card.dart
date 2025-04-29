@@ -2,7 +2,7 @@ import 'package:fallnews/core/constant/app_colors.dart';
 import 'package:fallnews/core/constant/app_dimens.dart';
 import 'package:fallnews/core/utils/date_utils.dart';
 import 'package:fallnews/core/utils/wrapper_utils.dart';
-import 'package:fallnews/presentation/features/news_home/data/models/news_data_model.dart';
+import 'package:fallnews/data/models/news_data_model.dart';
 import 'package:flutter/material.dart';
 
 class HomeNewsCard extends StatelessWidget {

@@ -2,7 +2,7 @@ import 'package:either_dart/either.dart';
 import 'package:fallnews/core/di/dependency_injection_service.dart';
 import 'package:fallnews/core/network/dio_client.dart';
 import 'package:fallnews/core/network/endpoints.dart';
-import 'package:fallnews/presentation/features/news_home/data/models/news_data_model.dart';
+import 'package:fallnews/data/models/news_data_model.dart';
 
 class GetNewsRepo {
   final _dioClient = sl.get<DioClient>();

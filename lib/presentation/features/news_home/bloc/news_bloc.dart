@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fallnews/presentation/features/news_home/data/repo/get_news_repo.dart';
 import 'package:fallnews/presentation/features/news_home/bloc/news_event.dart';
 import 'package:fallnews/presentation/features/news_home/bloc/news_state.dart';
-import 'package:fallnews/presentation/features/news_home/data/models/news_data_model.dart';
+import 'package:fallnews/data/models/news_data_model.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
   final GetNewsRepo _repository;
