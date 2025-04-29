@@ -1,6 +1,7 @@
 import 'package:fallnews/core/constant/app_dimens.dart';
 import 'package:fallnews/core/constant/app_strings.dart';
 import 'package:fallnews/presentation/features/bookmark_news/widgets/bookmark_news_list_item.dart';
+import 'package:fallnews/presentation/features/bookmark_news/widgets/shimmers/bookmark_shimmer_loading.dart';
 import 'package:flutter/material.dart';
 
 class BookmarkNewsScreen extends StatelessWidget {
@@ -10,7 +11,8 @@ class BookmarkNewsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(AppStrings.bookmarkedNews)),
-      body: _buildBookmarkNewsList(context: context),
+      body: BookmarkShimmerLoading(),
+      //_buildBookmarkNewsList(context: context),
     );
   }
 

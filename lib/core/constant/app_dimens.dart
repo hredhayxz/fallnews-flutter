@@ -40,6 +40,8 @@ final class AppDimens {
 
   static double get h96 => 96.h;
 
+  static double get h110 => 110.h;
+
   static double get h128 => 128.h;
 
   static double get h150 => 150.h;

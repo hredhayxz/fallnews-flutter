@@ -45,7 +45,8 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
           ),
         ],
       ),
-      body: _buildNewsList(),
+      body: HomeShimmerLoading()
+      //_buildNewsList(),
     );
   }
 
