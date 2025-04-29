@@ -11,7 +11,8 @@ class BookmarkNewsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(AppStrings.bookmarkedNews)),
-      body: BookmarkShimmerLoading(),
+      body: _buildNoBookmarkFound(context: context),
+      // BookmarkShimmerLoading(),
       //_buildBookmarkNewsList(context: context),
     );
   }
@@ -32,6 +33,38 @@ class BookmarkNewsScreen extends StatelessWidget {
         itemBuilder: (_, index) {
           return BookmarkNewsListItem(onRemove: () {}, onTap: () {});
         },
+      ),
+    );
+  }
+
+  Widget _buildNoBookmarkFound({required BuildContext context}) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    return RefreshIndicator(
+      onRefresh: () async {},
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.bookmark_border,
+              size: AppDimens.w64,
+              color: theme.disabledColor,
+            ),
+            SizedBox(height: AppDimens.h16),
+            Text(
+              AppStrings.noBookmarks,
+              style: textTheme.titleMedium?.copyWith(
+                color: theme.disabledColor,
+              ),
+            ),
+            SizedBox(height: AppDimens.h8),
+            Text(
+              'Save news articles to read later',
+              style: textTheme.bodyMedium?.copyWith(color: theme.disabledColor),
+            ),
+          ],
+        ),
       ),
     );
   }
