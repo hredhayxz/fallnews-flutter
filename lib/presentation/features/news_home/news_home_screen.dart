@@ -1,12 +1,47 @@
+import 'package:fallnews/core/constant/app_colors.dart';
+import 'package:fallnews/core/constant/app_dimens.dart';
+import 'package:fallnews/core/constant/app_strings.dart';
 import 'package:flutter/material.dart';
 
-class NewsHomeScreen extends StatelessWidget {
+class NewsHomeScreen extends StatefulWidget {
   const NewsHomeScreen({super.key});
 
   @override
+  State<NewsHomeScreen> createState() => _NewsHomeScreenState();
+}
+
+class _NewsHomeScreenState extends State<NewsHomeScreen> {
+  @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      body: Center(child: Text('News Home'),),
+      appBar: AppBar(
+        title: Text(
+          AppStrings.latestNews,
+          style: textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+          ), // Using textTheme
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.bookmark,
+              size: AppDimens.w24,
+              color: AppColors.primary,
+            ),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.settings,
+              size: AppDimens.w24,
+              color: AppColors.primary,
+            ),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: Center(child: Text('News home')),
     );
   }
 }
