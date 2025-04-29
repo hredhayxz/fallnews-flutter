@@ -41,11 +41,11 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
               size: AppDimens.w24,
               color: AppColors.primary,
             ),
-            onPressed: () {},
+            onPressed: () => Navigator.pushNamed(context, AppRoutes.settings),
           ),
         ],
       ),
-      body: HomeShimmerLoading()
+      body: HomeShimmerLoading(),
       //_buildNewsList(),
     );
   }
