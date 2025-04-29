@@ -29,6 +29,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   shimmer: ^3.0.0
   cached_network_image: ^3.4.1
+  flutter_svg: ^2.1.0
 
   #  Connectivity
   internet_connection_checker_plus: ^2.7.1
