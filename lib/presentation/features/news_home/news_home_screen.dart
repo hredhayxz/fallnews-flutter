@@ -2,6 +2,7 @@ import 'package:fallnews/core/constant/app_colors.dart';
 import 'package:fallnews/core/constant/app_dimens.dart';
 import 'package:fallnews/core/constant/app_strings.dart';
 import 'package:fallnews/presentation/features/news_home/widgets/home_news_card.dart';
+import 'package:fallnews/presentation/features/news_home/widgets/shimmers/home_shimmer_loading.dart';
 import 'package:flutter/material.dart';
 
 class NewsHomeScreen extends StatefulWidget {
@@ -42,16 +43,20 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
           ),
         ],
       ),
-      body: ListView.separated(
-        padding: EdgeInsets.all(AppDimens.r16),
-        physics: const AlwaysScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: 10,
-        separatorBuilder: (_, __) => SizedBox(height: AppDimens.r16),
-        itemBuilder: (_, index) {
-          return HomeNewsCard();
-        },
-      ),
+      body: HomeShimmerLoading(),
+    );
+  }
+
+  Widget _buildNewsList() {
+    return ListView.separated(
+      padding: EdgeInsets.all(AppDimens.r16),
+      physics: const AlwaysScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: 10,
+      separatorBuilder: (_, __) => SizedBox(height: AppDimens.r16),
+      itemBuilder: (_, index) {
+        return HomeNewsCard();
+      },
     );
   }
 }
