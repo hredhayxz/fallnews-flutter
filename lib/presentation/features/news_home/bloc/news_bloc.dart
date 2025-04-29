@@ -1,3 +1,6 @@
+import 'package:fallnews/core/di/dependency_injection_service.dart';
+import 'package:fallnews/core/utils/connectivity_checker.dart';
+import 'package:fallnews/data/local/local_db.dart';
 import 'package:fallnews/data/repo/get_news_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fallnews/presentation/features/news_home/bloc/news_event.dart';
@@ -7,7 +10,8 @@ import 'package:fallnews/data/models/news_data_model.dart';
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
   final GetNewsRepo _repository;
   int _currentPage = 1;
-  final int _pageSize = 4;
+  final int _pageSize = 20;
+  final ConnectivityChecker di = sl.get<ConnectivityChecker>();
 
   NewsBloc() : _repository = GetNewsRepo(), super(NewsInitial()) {
     on<FetchNewsEvent>((event, emit) async {
@@ -25,26 +29,40 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
 
         final result = await _repository.getNews(page: _currentPage);
 
-        result.fold(
-          (failure) {
-            emit(
-              NewsError(
-                failure,
-                articles: _getCurrentArticles(),
-                hasReachedMax: state.hasReachedMax,
-              ),
-            );
+        await result.fold(
+          (failure) async {
+            if (await di.hasInternetConnection()) {
+              emit(
+                NewsError(
+                  failure,
+                  articles: _getCurrentArticles(),
+                  hasReachedMax: state.hasReachedMax,
+                ),
+              );
+            } else {
+              final cachedNews = LocalDB.homeNews;
+              if (cachedNews.isNotEmpty) {
+                emit(
+                  NewsLoaded(
+                    articles: cachedNews,
+                    hasReachedMax: state.hasReachedMax,
+                  ),
+                );
+              }
+            }
           },
           (newsData) {
             final newArticles = newsData.articles ?? [];
+
             final updatedArticles =
                 event.isRefresh
                     ? newArticles
                     : [..._getCurrentArticles(), ...newArticles];
 
             final hasReachedMax = newArticles.length < _pageSize;
-
             _currentPage++;
+
+            LocalDB.homeNews = updatedArticles;
 
             emit(
               NewsLoaded(
@@ -55,13 +73,23 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
           },
         );
       } catch (e) {
-        emit(
-          NewsError(
-            e.toString(),
-            articles: _getCurrentArticles(),
-            hasReachedMax: state.hasReachedMax,
-          ),
-        );
+        final cachedNews = LocalDB.homeNews;
+        if (await di.hasInternetConnection()) {
+          emit(
+            NewsError(
+              e.toString(),
+              articles: _getCurrentArticles(),
+              hasReachedMax: state.hasReachedMax,
+            ),
+          );
+        } else if (cachedNews.isNotEmpty) {
+          emit(
+            NewsLoaded(
+              articles: cachedNews,
+              hasReachedMax: state.hasReachedMax,
+            ),
+          );
+        }
       }
     });
   }
