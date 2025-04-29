@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:fallnews/data/models/news_data_model.dart';
+import 'package:fallnews/presentation/features/news_home/data/models/news_data_model.dart';
 
 abstract class NewsState extends Equatable {
   final List<Articles> articles;
@@ -31,5 +31,5 @@ class NewsError extends NewsState {
   });
 
   @override
-  List<Object?> get props => [message, articles];
+  List<Object?> get props => [message, articles, hasReachedMax];
 }
