@@ -32,7 +32,7 @@ class HomeNewsCard extends StatelessWidget {
                 top: Radius.circular(AppDimens.r12),
               ),
               child: WrapperUtils.cachedImage(
-                imageUrl: '',
+                imageUrl: 'https://cdn.bhdw.net/im/error-wallpaper-29852_w635.webp',
                 width: double.infinity,
                 height: AppDimens.h128,
                 fit: BoxFit.cover,
