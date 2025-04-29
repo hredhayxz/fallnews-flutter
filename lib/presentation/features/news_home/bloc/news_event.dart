@@ -1,15 +1,17 @@
 import 'package:equatable/equatable.dart';
 
 abstract class NewsEvent extends Equatable {
+  const NewsEvent();
+
   @override
   List<Object?> get props => [];
 }
 
-class LoadNews extends NewsEvent {
-  final int page;
+class FetchNewsEvent extends NewsEvent {
+  final bool isRefresh;
 
-  LoadNews(this.page);
+  const FetchNewsEvent({this.isRefresh = false});
 
   @override
-  List<Object?> get props => [page];
+  List<Object?> get props => [isRefresh];
 }

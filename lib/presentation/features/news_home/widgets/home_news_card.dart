@@ -1,10 +1,14 @@
 import 'package:fallnews/core/constant/app_colors.dart';
 import 'package:fallnews/core/constant/app_dimens.dart';
+import 'package:fallnews/core/utils/date_utils.dart';
 import 'package:fallnews/core/utils/wrapper_utils.dart';
+import 'package:fallnews/data/models/news_data_model.dart';
 import 'package:flutter/material.dart';
 
 class HomeNewsCard extends StatelessWidget {
-  const HomeNewsCard({super.key});
+  const HomeNewsCard({super.key, required this.news});
+
+  final Articles news;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +36,7 @@ class HomeNewsCard extends StatelessWidget {
                 top: Radius.circular(AppDimens.r12),
               ),
               child: WrapperUtils.cachedImage(
-                imageUrl: 'https://cdn.bhdw.net/im/error-wallpaper-29852_w635.webp',
+                imageUrl: news.urlToImage ?? '',
                 width: double.infinity,
                 height: AppDimens.h128,
                 fit: BoxFit.cover,
@@ -45,7 +49,7 @@ class HomeNewsCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'New Healthcare Bill Passed',
+                    news.title ?? '',
                     style: textTheme.titleMedium?.copyWith(
                       fontSize: AppDimens.sp16,
                       fontWeight: FontWeight.bold,
@@ -56,7 +60,7 @@ class HomeNewsCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        'Kalbela',
+                        news.source?.name ?? '',
                         style: textTheme.bodySmall?.copyWith(
                           fontSize: AppDimens.sp12,
                           color: AppColors.grey,
@@ -70,7 +74,9 @@ class HomeNewsCard extends StatelessWidget {
                       ),
                       SizedBox(width: AppDimens.w4),
                       Text(
-                        '45m ago',
+                        DateUtilsHelper.formatPublishedDate(
+                          news.publishedAt ?? '',
+                        ),
                         style: textTheme.bodySmall?.copyWith(
                           fontSize: AppDimens.sp12,
                           color: AppColors.grey,
