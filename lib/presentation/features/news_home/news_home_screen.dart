@@ -43,20 +43,23 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
           ),
         ],
       ),
-      body: HomeShimmerLoading(),
+      body: _buildNewsList(),
     );
   }
 
   Widget _buildNewsList() {
-    return ListView.separated(
-      padding: EdgeInsets.all(AppDimens.r16),
-      physics: const AlwaysScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: 10,
-      separatorBuilder: (_, __) => SizedBox(height: AppDimens.r16),
-      itemBuilder: (_, index) {
-        return HomeNewsCard();
-      },
+    return RefreshIndicator(
+      onRefresh: () async {},
+      child: ListView.separated(
+        padding: EdgeInsets.all(AppDimens.r16),
+        physics: const AlwaysScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: 10,
+        separatorBuilder: (_, __) => SizedBox(height: AppDimens.r16),
+        itemBuilder: (_, index) {
+          return HomeNewsCard();
+        },
+      ),
     );
   }
 }
