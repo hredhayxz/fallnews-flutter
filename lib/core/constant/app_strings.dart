@@ -26,6 +26,7 @@ final class AppStrings {
   static const String categories = 'Categories';
 
   // Bookmarks
+  static const String bookmarkedNews = 'Bookmarked News';
   static const String bookmarks = 'Bookmarks';
   static const String noBookmarks = 'No bookmarks yet.';
 

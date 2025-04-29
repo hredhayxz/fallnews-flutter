@@ -1,6 +1,7 @@
 import 'package:fallnews/core/constant/app_colors.dart';
 import 'package:fallnews/core/constant/app_dimens.dart';
 import 'package:fallnews/core/constant/app_strings.dart';
+import 'package:fallnews/core/routes/app_routes.dart';
 import 'package:fallnews/presentation/features/news_home/widgets/home_news_card.dart';
 import 'package:fallnews/presentation/features/news_home/widgets/shimmers/home_shimmer_loading.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,8 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
               size: AppDimens.w24,
               color: AppColors.primary,
             ),
-            onPressed: () {},
+            onPressed:
+                () => Navigator.pushNamed(context, AppRoutes.bookmarkNews),
           ),
           IconButton(
             icon: Icon(

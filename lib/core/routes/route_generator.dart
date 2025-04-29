@@ -1,9 +1,12 @@
 import 'package:fallnews/core/routes/app_routes.dart';
+import 'package:fallnews/presentation/features/bookmark_news/bookmark_news_screen.dart';
 import 'package:fallnews/presentation/features/news_home/news_home_screen.dart';
 import 'package:fallnews/presentation/features/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 
-class RouteGenerator {
+final class RouteGenerator {
+  RouteGenerator._();
+
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;
 
@@ -12,6 +15,8 @@ class RouteGenerator {
         return _fadeRoute(const SplashScreen(), settings);
       case AppRoutes.newsHome:
         return _fadeRoute(const NewsHomeScreen(), settings);
+      case AppRoutes.bookmarkNews:
+        return _fadeRoute(const BookmarkNewsScreen(), settings);
 
       default:
         return _errorRoute();
