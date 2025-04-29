@@ -1,14 +1,13 @@
-import 'package:fallnews/core/constant/app_colors.dart';
-import 'package:fallnews/core/constant/app_dimens.dart';
-import 'package:fallnews/core/routes/app_routes.dart';
 import 'package:fallnews/presentation/features/auth/bloc/auth/auth_bloc.dart';
 import 'package:fallnews/presentation/features/auth/bloc/auth/auth_event.dart';
 import 'package:fallnews/presentation/features/auth/bloc/auth/auth_state.dart';
-import 'package:fallnews/presentation/features/auth/bloc/password_visivility/password_visibility_bloc.dart';
-import 'package:fallnews/presentation/widgets/common_text_form_field.dart';
-import 'package:fallnews/presentation/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fallnews/core/constant/app_colors.dart';
+import 'package:fallnews/core/constant/app_dimens.dart';
+import 'package:fallnews/core/routes/app_routes.dart';
+import 'package:fallnews/presentation/widgets/common_text_form_field.dart';
+import 'package:fallnews/presentation/widgets/primary_button.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -38,21 +37,18 @@ class LoginScreen extends StatelessWidget {
                 keyboardType: TextInputType.emailAddress,
               ),
               SizedBox(height: AppDimens.h16),
-              BlocProvider(
-                create: (_) => PasswordVisibilityBloc(),
-                child: CommonTextFormField(
-                  hintText: 'Password',
-                  controller: passwordController,
-                  isPassword: true,
-                ),
+              CommonTextFormField(
+                hintText: 'Password',
+                controller: passwordController,
+                isPassword: true,
               ),
               SizedBox(height: AppDimens.h24),
               BlocConsumer<AuthBloc, AuthState>(
                 listener: (context, state) {
                   if (state is AuthSuccess) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Login Successful')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Login Successful')));
                     Navigator.pushReplacementNamed(context, AppRoutes.newsHome);
                   } else if (state is AuthFailure) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -62,15 +58,15 @@ class LoginScreen extends StatelessWidget {
                 },
                 builder: (context, state) {
                   if (state is AuthLoading) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(child: CircularProgressIndicator());
                   }
                   return PrimaryButton(
                     buttonText: 'Sign In',
                     onPressed: () {
                       context.read<AuthBloc>().add(
                         LoginUser(
-                          email: emailController.text.trim(),
-                          password: passwordController.text.trim(),
+                          email: emailController.text,
+                          password: passwordController.text,
                         ),
                       );
                     },

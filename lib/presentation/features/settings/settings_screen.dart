@@ -1,9 +1,12 @@
 import 'package:fallnews/core/constant/app_colors.dart';
 import 'package:fallnews/core/constant/app_dimens.dart';
 import 'package:fallnews/core/constant/app_strings.dart';
+import 'package:fallnews/presentation/features/auth/bloc/auth/auth_bloc.dart';
+import 'package:fallnews/presentation/features/auth/bloc/auth/auth_event.dart';
 import 'package:fallnews/presentation/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:fallnews/core/routes/app_routes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -56,6 +59,7 @@ class SettingsScreen extends StatelessWidget {
     return PrimaryButton(
       buttonText: AppStrings.logout,
       onPressed: () {
+        context.read<AuthBloc>().add(LogoutUser());
         Navigator.pushNamedAndRemoveUntil(
           context,
           AppRoutes.login,
