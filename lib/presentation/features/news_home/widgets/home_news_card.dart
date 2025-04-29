@@ -1,5 +1,6 @@
 import 'package:fallnews/core/constant/app_colors.dart';
 import 'package:fallnews/core/constant/app_dimens.dart';
+import 'package:fallnews/core/routes/app_routes.dart';
 import 'package:fallnews/core/utils/date_utils.dart';
 import 'package:fallnews/core/utils/wrapper_utils.dart';
 import 'package:fallnews/data/models/news_data_model.dart';
@@ -14,7 +15,9 @@ class HomeNewsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     return GestureDetector(
-      onTap: () {},
+      onTap:
+          () =>
+              Navigator.pushNamed(context, AppRoutes.details, arguments: news),
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white,

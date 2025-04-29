@@ -42,10 +42,10 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
                 icon: Icon(Icons.bookmark, color: colorScheme.primary),
                 onPressed: () {},
               ),
-              IconButton(
-                icon: Icon(Icons.share, color: colorScheme.primary),
-                onPressed: () {},
-              ),
+              // IconButton(
+              //   icon: Icon(Icons.share, color: colorScheme.primary),
+              //   onPressed: () {},
+              // ),
             ],
           ),
           SliverToBoxAdapter(
@@ -108,10 +108,6 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.arrow_upward),
       ),
     );
   }

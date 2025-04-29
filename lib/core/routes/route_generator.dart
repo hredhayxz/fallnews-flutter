@@ -1,8 +1,10 @@
 import 'package:fallnews/core/routes/app_routes.dart';
+import 'package:fallnews/data/models/news_data_model.dart';
 import 'package:fallnews/presentation/features/auth/forgot_password_screen.dart';
 import 'package:fallnews/presentation/features/auth/login_screen.dart';
 import 'package:fallnews/presentation/features/auth/registration_screen.dart';
 import 'package:fallnews/presentation/features/bookmark_news/bookmark_news_screen.dart';
+import 'package:fallnews/presentation/features/news_details/news_details_screen.dart';
 import 'package:fallnews/presentation/features/news_home/news_home_screen.dart';
 import 'package:fallnews/presentation/features/settings/settings_screen.dart';
 import 'package:fallnews/presentation/features/splash/splash_screen.dart';
@@ -21,6 +23,9 @@ final class RouteGenerator {
         return _fadeRoute(const NewsHomeScreen(), settings);
       case AppRoutes.bookmarkNews:
         return _fadeRoute(const BookmarkNewsScreen(), settings);
+      case AppRoutes.details:
+        final news = args as Articles;
+        return _fadeRoute(NewsDetailScreen(news: news), settings);
       case AppRoutes.settings:
         return _fadeRoute(const SettingsScreen(), settings);
       case AppRoutes.login:
