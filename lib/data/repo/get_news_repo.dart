@@ -13,7 +13,6 @@ class GetNewsRepo {
         '/everything',
         queryParameters: {
           'q': 'tesla',
-          'from': '2025-03-29',
           'sortBy': 'publishedAt',
           'page': page,
           'pageSize': 10,

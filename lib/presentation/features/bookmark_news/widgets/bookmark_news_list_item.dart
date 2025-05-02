@@ -1,15 +1,19 @@
 import 'package:fallnews/core/constant/app_dimens.dart';
+import 'package:fallnews/core/utils/date_utils.dart';
 import 'package:fallnews/core/utils/wrapper_utils.dart';
+import 'package:fallnews/data/models/news_data_model.dart';
 import 'package:flutter/material.dart';
 
 class BookmarkNewsListItem extends StatelessWidget {
   final VoidCallback onRemove;
   final VoidCallback onTap;
+  final Articles article;
 
   const BookmarkNewsListItem({
     super.key,
     required this.onRemove,
     required this.onTap,
+    required this.article,
   });
 
   @override
@@ -33,8 +37,7 @@ class BookmarkNewsListItem extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(AppDimens.r8),
               child: WrapperUtils.cachedImage(
-                imageUrl:
-                    'https://cdn.bhdw.net/im/error-wallpaper-29852_w635.webp',
+                imageUrl: article.urlToImage ?? '',
                 width: AppDimens.w96,
                 height: AppDimens.h96,
                 fit: BoxFit.cover,
@@ -47,7 +50,7 @@ class BookmarkNewsListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'News Title',
+                    article.title ?? '',
                     style: textTheme.titleMedium,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -57,7 +60,7 @@ class BookmarkNewsListItem extends StatelessWidget {
                     spacing: AppDimens.w8,
                     children: [
                       Text(
-                        "news.source",
+                        article.source?.name ?? '',
                         style: textTheme.bodySmall?.copyWith(
                           color: textTheme.bodySmall?.color?.withOpacity(0.7),
                         ),
@@ -68,7 +71,9 @@ class BookmarkNewsListItem extends StatelessWidget {
                         color: textTheme.bodySmall?.color?.withOpacity(0.5),
                       ),
                       Text(
-                        "news.date",
+                        DateUtilsHelper.formatPublishedDate(
+                          article.publishedAt ?? '',
+                        ),
                         style: textTheme.bodySmall?.copyWith(
                           color: textTheme.bodySmall?.color?.withOpacity(0.5),
                         ),

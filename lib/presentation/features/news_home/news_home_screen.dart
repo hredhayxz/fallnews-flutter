@@ -100,7 +100,10 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
             );
           } else if (state is NewsError) {
             // LocalDB.bookMarkNews
-            return Center(child: Text('Error: ${state.message}'));
+            return Padding(
+              padding: EdgeInsets.all(AppDimens.r16),
+              child: Center(child: Text('Error: ${state.message}')),
+            );
           } else {
             return const Center(child: Text('No news found.'));
           }
