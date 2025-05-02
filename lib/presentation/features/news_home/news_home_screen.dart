@@ -7,6 +7,7 @@ import 'package:fallnews/presentation/features/news_home/bloc/news_event.dart';
 import 'package:fallnews/presentation/features/news_home/bloc/news_state.dart';
 import 'package:fallnews/presentation/features/news_home/widgets/home_news_card.dart';
 import 'package:fallnews/presentation/features/news_home/widgets/shimmers/home_shimmer_loading.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,30 +20,35 @@ class NewsHomeScreen extends StatefulWidget {
 
 class _NewsHomeScreenState extends State<NewsHomeScreen> {
   final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
 
   @override
   void initState() {
     super.initState();
-    _fetchNews();
+    _fetchNews(isRefresh: true);
     _scrollController.addListener(_onScroll);
   }
 
-  void _fetchNews() {
-    context.read<NewsBloc>().add(FetchNewsEvent());
+  void _fetchNews({bool isRefresh = false}) {
+    if (isRefresh) {
+      _currentPage = 1;
+    }
+    context.read<NewsBloc>().add(
+      FetchNewsEvent(page: _currentPage, isRefresh: isRefresh),
+    );
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 300) {
-      final state = context.read<NewsBloc>().state;
-      if (state is NewsLoaded && !state.hasReachedMax) {
-        _fetchNews();
-      }
+      _currentPage++;
+      _fetchNews();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
@@ -57,8 +63,17 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
               size: AppDimens.w24,
               color: AppColors.primary,
             ),
-            onPressed:
-                () => Navigator.pushNamed(context, AppRoutes.bookmarkNews),
+            onPressed: () {
+              if (user == null) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Please sign in')));
+                Navigator.pushNamed(context, AppRoutes.login);
+                return;
+              } else {
+                Navigator.pushNamed(context, AppRoutes.bookmarkNews);
+              }
+            },
           ),
           IconButton(
             icon: Icon(
@@ -66,40 +81,62 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
               size: AppDimens.w24,
               color: AppColors.primary,
             ),
-            onPressed: () => Navigator.pushNamed(context, AppRoutes.settings),
+            onPressed: () {
+              if (user == null) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Please sign in')));
+                Navigator.pushNamed(context, AppRoutes.login);
+                return;
+              } else {
+                Navigator.pushNamed(context, AppRoutes.settings);
+              }
+            },
           ),
         ],
       ),
       body: BlocBuilder<NewsBloc, NewsState>(
         builder: (context, state) {
-          if (state is NewsLoading) {
+          if (state is NewsLoading && state.articles.isEmpty) {
             return const HomeShimmerLoading();
-          } else if (state is NewsLoaded) {
+          } else if (state is NewsLoaded ||
+              (state is NewsLoading && state.articles.isNotEmpty)) {
+            final articles = state.articles;
             return RefreshIndicator(
               onRefresh: () async {
-                context.read<NewsBloc>().add(FetchNewsEvent(isRefresh: true));
+                _fetchNews(isRefresh: true);
               },
               child: ListView.separated(
                 controller: _scrollController,
                 padding: EdgeInsets.all(AppDimens.r16),
-                itemCount: state.articles.length + 1,
+                itemCount: articles.length + 1,
+                // Always show loading indicator
                 separatorBuilder: (_, __) => SizedBox(height: AppDimens.r16),
                 itemBuilder: (_, index) {
-                  if (index < state.articles.length) {
-                    return HomeNewsCard(news: state.articles[index]);
+                  if (index < articles.length) {
+                    return HomeNewsCard(news: articles[index]);
                   } else {
-                    return state.hasReachedMax
-                        ? const SizedBox.shrink()
-                        : const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 24),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 24),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
                   }
                 },
               ),
             );
           } else if (state is NewsError) {
-            return Center(child: Text('Error: ${state.message}'));
+            return RefreshIndicator(
+              onRefresh: () async {
+                _fetchNews(isRefresh: true);
+              },
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.all(AppDimens.r16),
+                  child: Center(child: Text('Error: ${state.message}')),
+                ),
+              ),
+            );
           } else {
             return const Center(child: Text('No news found.'));
           }

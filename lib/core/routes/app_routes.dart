@@ -11,4 +11,5 @@ class AppRoutes {
   static const String newsHome = '/news-home';
   static const String bookmarkNews = '/bookmark-news';
   static const String settings = '/settings';
+  static const String details = '/details';
 }

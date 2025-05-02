@@ -1,67 +1,104 @@
+import 'package:fallnews/core/di/dependency_injection_service.dart';
+import 'package:fallnews/core/utils/connectivity_checker.dart';
+import 'package:fallnews/data/local/local_db.dart';
+import 'package:fallnews/data/repo/get_news_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fallnews/presentation/features/news_home/data/repo/get_news_repo.dart';
 import 'package:fallnews/presentation/features/news_home/bloc/news_event.dart';
 import 'package:fallnews/presentation/features/news_home/bloc/news_state.dart';
 import 'package:fallnews/data/models/news_data_model.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
   final GetNewsRepo _repository;
-  int _currentPage = 1;
-  final int _pageSize = 4;
+  final int _pageSize = 20;
+  final ConnectivityChecker di = sl.get<ConnectivityChecker>();
 
-  NewsBloc() : _repository = GetNewsRepo(), super(NewsInitial()) {
+  NewsBloc() : _repository = GetNewsRepo(), super(const NewsInitial()) {
     on<FetchNewsEvent>((event, emit) async {
       if (state is NewsLoading && !event.isRefresh) return;
 
       try {
         if (event.isRefresh) {
-          _currentPage = 1;
           emit(const NewsLoading());
-        } else if (state is NewsLoaded && (state as NewsLoaded).hasReachedMax) {
-          return;
         } else if (state is NewsInitial) {
           emit(const NewsLoading());
         }
 
-        final result = await _repository.getNews(page: _currentPage);
+        final result = await _repository.getNews(
+          page: event.page,
+          pageSize: _pageSize,
+        );
 
-        result.fold(
-          (failure) {
-            emit(
-              NewsError(
-                failure,
-                articles: _getCurrentArticles(),
-                hasReachedMax: state.hasReachedMax,
-              ),
-            );
+        await result.fold(
+          (failure) async {
+            final currentTotal = state.totalResults;
+            if (await di.hasInternetConnection()) {
+              emit(
+                NewsError(
+                  failure,
+                  articles: _getCurrentArticles(),
+                  hasReachedMax: state.hasReachedMax,
+                  totalResults: currentTotal,
+                ),
+              );
+            } else {
+              final cachedNews = LocalDB.homeNews;
+              if (cachedNews.isNotEmpty) {
+                emit(
+                  NewsLoaded(
+                    articles: cachedNews,
+                    hasReachedMax: state.hasReachedMax,
+                    totalResults: currentTotal,
+                  ),
+                );
+              }
+            }
           },
           (newsData) {
             final newArticles = newsData.articles ?? [];
+            final totalResults = newsData.totalResults ?? 0;
+
             final updatedArticles =
                 event.isRefresh
                     ? newArticles
                     : [..._getCurrentArticles(), ...newArticles];
 
-            final hasReachedMax = newArticles.length < _pageSize;
+            // Only append new articles if they exist
+            final hasReachedMax = newArticles.isEmpty;
 
-            _currentPage++;
+            if (newArticles.isNotEmpty) {
+              LocalDB.homeNews = updatedArticles;
+            }
 
             emit(
               NewsLoaded(
                 articles: updatedArticles,
                 hasReachedMax: hasReachedMax,
+                totalResults: totalResults,
               ),
             );
           },
         );
       } catch (e) {
-        emit(
-          NewsError(
-            e.toString(),
-            articles: _getCurrentArticles(),
-            hasReachedMax: state.hasReachedMax,
-          ),
-        );
+        final currentTotal = state.totalResults;
+        final cachedNews = LocalDB.homeNews;
+        if (await di.hasInternetConnection()) {
+          emit(
+            NewsError(
+              e.toString(),
+              articles: _getCurrentArticles(),
+              hasReachedMax: state.hasReachedMax,
+              totalResults: currentTotal,
+            ),
+          );
+        } else if (cachedNews.isNotEmpty) {
+          emit(
+            NewsLoaded(
+              articles: cachedNews,
+              hasReachedMax: state.hasReachedMax,
+              totalResults: currentTotal,
+            ),
+          );
+        }
       }
     });
   }

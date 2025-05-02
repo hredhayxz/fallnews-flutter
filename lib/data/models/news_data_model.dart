@@ -28,6 +28,7 @@ class NewsDataModel {
 }
 
 class Articles {
+  String? id;
   Source? source;
   String? author;
   String? title;
@@ -38,6 +39,7 @@ class Articles {
   String? content;
 
   Articles({
+    this.id,
     this.source,
     this.author,
     this.title,
@@ -49,6 +51,7 @@ class Articles {
   });
 
   Articles.fromJson(Map<String, dynamic> json) {
+    id = json['url']?.toString().replaceAll('/', '_') ?? '';
     source = json['source'] != null ? Source.fromJson(json['source']) : null;
     author = json['author'];
     title = json['title'];
@@ -61,6 +64,7 @@ class Articles {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
     if (source != null) {
       data['source'] = source!.toJson();
     }
@@ -72,6 +76,20 @@ class Articles {
     data['publishedAt'] = publishedAt;
     data['content'] = content;
     return data;
+  }
+
+  factory Articles.fromFirestore(Map<String, dynamic> data) {
+    return Articles(
+      id: data['id'] ?? '',
+      source: data['source'] != null ? Source.fromJson(data['source']) : null,
+      author: data['author'],
+      title: data['title'],
+      description: data['description'],
+      url: data['url'],
+      urlToImage: data['urlToImage'],
+      publishedAt: data['publishedAt'],
+      content: data['content'],
+    );
   }
 }
 

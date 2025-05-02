@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1071309379858",
+    "project_id": "fall-news-flutter",
+    "storage_bucket": "fall-news-flutter.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1071309379858:android:4c86659134a7f9291dfbcb",
+        "android_client_info": {
+          "package_name": "com.endbrackets.fallnews"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeV4ShtKMuHLc34C9vBl_ihMtecmwLZZs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
