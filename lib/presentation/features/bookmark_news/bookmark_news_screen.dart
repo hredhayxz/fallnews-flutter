@@ -18,7 +18,6 @@ class BookmarkNewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Check if user is authenticated
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       return Scaffold(
@@ -100,7 +99,7 @@ class BookmarkNewsScreen extends StatelessWidget {
         final article = bookmarks[index];
         return BookmarkNewsListItem(
           onRemove: () {
-            context.read<BookmarkBloc>().add(RemoveBookmarkEvent('111'));
+            context.read<BookmarkBloc>().add(RemoveBookmarkEvent(article.id!));
           },
           onTap: () {
             // Navigate to article details screen

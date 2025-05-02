@@ -9,7 +9,6 @@ import 'package:fallnews/data/models/news_data_model.dart';
 
 class NewsBloc extends Bloc<NewsEvent, NewsState> {
   final GetNewsRepo _repository;
-  int _currentPage = 1;
   final int _pageSize = 20;
   final ConnectivityChecker di = sl.get<ConnectivityChecker>();
 
@@ -19,7 +18,6 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
 
       try {
         if (event.isRefresh) {
-          _currentPage = 1;
           emit(const NewsLoading());
         } else if (state is NewsLoaded && (state as NewsLoaded).hasReachedMax) {
           return;
@@ -27,7 +25,10 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
           emit(const NewsLoading());
         }
 
-        final result = await _repository.getNews(page: _currentPage);
+        final result = await _repository.getNews(
+          page: event.page,
+          pageSize: _pageSize,
+        );
 
         await result.fold(
           (failure) async {
@@ -60,7 +61,6 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
                     : [..._getCurrentArticles(), ...newArticles];
 
             final hasReachedMax = newArticles.length < _pageSize;
-            _currentPage++;
 
             LocalDB.homeNews = updatedArticles;
 

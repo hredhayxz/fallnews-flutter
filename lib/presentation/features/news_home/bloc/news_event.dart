@@ -8,10 +8,11 @@ abstract class NewsEvent extends Equatable {
 }
 
 class FetchNewsEvent extends NewsEvent {
+  final int page;
   final bool isRefresh;
 
-  const FetchNewsEvent({this.isRefresh = false});
+  const FetchNewsEvent({required this.page, this.isRefresh = false});
 
   @override
-  List<Object?> get props => [isRefresh];
+  List<Object?> get props => [page, isRefresh];
 }

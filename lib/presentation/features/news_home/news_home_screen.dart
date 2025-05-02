@@ -20,16 +20,20 @@ class NewsHomeScreen extends StatefulWidget {
 
 class _NewsHomeScreenState extends State<NewsHomeScreen> {
   final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
 
   @override
   void initState() {
     super.initState();
-    _fetchNews();
+    _fetchNews(isRefresh: true);
     _scrollController.addListener(_onScroll);
   }
 
-  void _fetchNews() {
-    context.read<NewsBloc>().add(FetchNewsEvent());
+  void _fetchNews({bool isRefresh = false}) {
+    if (isRefresh) {
+      _currentPage = 1;
+    }
+    context.read<NewsBloc>().add(FetchNewsEvent(page: _currentPage, isRefresh: isRefresh));
   }
 
   void _onScroll() {
@@ -37,6 +41,7 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
         _scrollController.position.maxScrollExtent - 300) {
       final state = context.read<NewsBloc>().state;
       if (state is NewsLoaded && !state.hasReachedMax) {
+        _currentPage++;
         _fetchNews();
       }
     }
@@ -61,9 +66,9 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
             ),
             onPressed: () {
               if (user == null) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('Please sign in')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please sign in')),
+                );
                 Navigator.pushNamed(context, AppRoutes.login);
                 return;
               } else {
@@ -79,9 +84,9 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
             ),
             onPressed: () {
               if (user == null) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('Please sign in')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Please sign in')),
+                );
                 Navigator.pushNamed(context, AppRoutes.login);
                 return;
               } else {
@@ -98,7 +103,7 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
           } else if (state is NewsLoaded) {
             return RefreshIndicator(
               onRefresh: () async {
-                context.read<NewsBloc>().add(FetchNewsEvent(isRefresh: true));
+                _fetchNews(isRefresh: true);
               },
               child: ListView.separated(
                 controller: _scrollController,
@@ -112,15 +117,14 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
                     return state.hasReachedMax
                         ? const SizedBox.shrink()
                         : const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 24),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
+                      padding: EdgeInsets.symmetric(vertical: 24),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
                   }
                 },
               ),
             );
           } else if (state is NewsError) {
-            // LocalDB.bookMarkNews
             return Padding(
               padding: EdgeInsets.all(AppDimens.r16),
               child: Center(child: Text('Error: ${state.message}')),

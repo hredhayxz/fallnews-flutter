@@ -7,7 +7,10 @@ import 'package:fallnews/data/models/news_data_model.dart';
 class GetNewsRepo {
   final _dioClient = sl.get<DioClient>();
 
-  Future<Either<String, NewsDataModel>> getNews({required int page}) async {
+  Future<Either<String, NewsDataModel>> getNews({
+    required int page,
+    required int pageSize,
+  }) async {
     try {
       final response = await _dioClient.get(
         '/everything',
@@ -15,7 +18,7 @@ class GetNewsRepo {
           'q': 'tesla',
           'sortBy': 'publishedAt',
           'page': page,
-          'pageSize': 10,
+          'pageSize': pageSize,
           'apiKey': apiKey,
         },
       );
