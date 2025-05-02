@@ -49,11 +49,9 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
               actions: [
                 BlocBuilder<BookmarkBloc, BookmarkState>(
                   builder: (context, state) {
-                    print('widget.news.idwidget.news.id ${widget.news.id}');
                     bool isBookmarked =
                         state is BookmarkLoaded &&
                         state.bookmarks.any((a) => a.id == widget.news.id);
-                    print('isBookmarkedisBookmarkedisBookmarked ${isBookmarked}');
                     return IconButton(
                       icon: Icon(
                         isBookmarked ? Icons.bookmark : Icons.bookmark_border,

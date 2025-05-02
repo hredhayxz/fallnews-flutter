@@ -7,6 +7,7 @@ import 'package:fallnews/presentation/features/news_home/bloc/news_event.dart';
 import 'package:fallnews/presentation/features/news_home/bloc/news_state.dart';
 import 'package:fallnews/presentation/features/news_home/widgets/home_news_card.dart';
 import 'package:fallnews/presentation/features/news_home/widgets/shimmers/home_shimmer_loading.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -66,7 +67,18 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
               size: AppDimens.w24,
               color: AppColors.primary,
             ),
-            onPressed: () => Navigator.pushNamed(context, AppRoutes.settings),
+            onPressed: () {
+              final user = FirebaseAuth.instance.currentUser;
+              if (user == null) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Please sign in')));
+                Navigator.pushNamed(context, AppRoutes.login);
+                return;
+              } else {
+                Navigator.pushNamed(context, AppRoutes.settings);
+              }
+            },
           ),
         ],
       ),
