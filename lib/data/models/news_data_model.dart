@@ -51,7 +51,7 @@ class Articles {
   });
 
   Articles.fromJson(Map<String, dynamic> json) {
-    id = json['url'] ?? ''; // Url as id
+    id = json['url']?.toString().replaceAll('/', '_') ?? '';
     source = json['source'] != null ? Source.fromJson(json['source']) : null;
     author = json['author'];
     title = json['title'];

@@ -44,6 +44,7 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
@@ -58,8 +59,17 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
               size: AppDimens.w24,
               color: AppColors.primary,
             ),
-            onPressed:
-                () => Navigator.pushNamed(context, AppRoutes.bookmarkNews),
+            onPressed: () {
+              if (user == null) {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Please sign in')));
+                Navigator.pushNamed(context, AppRoutes.login);
+                return;
+              } else {
+                Navigator.pushNamed(context, AppRoutes.bookmarkNews);
+              }
+            },
           ),
           IconButton(
             icon: Icon(
@@ -68,7 +78,6 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
               color: AppColors.primary,
             ),
             onPressed: () {
-              final user = FirebaseAuth.instance.currentUser;
               if (user == null) {
                 ScaffoldMessenger.of(
                   context,

@@ -12,7 +12,10 @@ class BookmarkRepository {
   Future<Either<String, void>> addBookmark(Articles article) async {
     try {
       final user = _auth.currentUser;
-      if (user == null) return Left('User not authenticated');
+      if (user == null) {
+        print('objectUser not authenticated');
+        return Left('User not authenticated');
+      }
 
       await _firestore
           .collection('users')
@@ -20,6 +23,7 @@ class BookmarkRepository {
           .collection('bookmarks')
           .doc(article.id)
           .set(article.toJson());
+
       return const Right(null);
     } catch (e) {
       return Left(e.toString());
@@ -60,6 +64,7 @@ class BookmarkRepository {
               .toList();
       return Right(bookmarks);
     } catch (e) {
+      print('objectUser getBookmarks error: $e');
       return Left(e.toString());
     }
   }
