@@ -66,6 +66,18 @@ cd fallnews-flutter
 
 3. Install dependencies:
 
+
+# Set up Firebase:
+- Create a Firebase project at Firebase Console.
+- Add an Android/iOS app to your Firebase project.
+- Download google-services.json (Android) or GoogleService-Info.plist (iOS) and place it in the respective directories.
+- Run:flutterfire configure
+
+
+## Configure News API:
+- Create a .env file in the root directory.
+- Add your News API key:NEWS_API_KEY=your_news_api_key_here
+
 ```bash
 flutter pub get
 ```
@@ -77,28 +89,6 @@ Connect your device or emulator and run the app using the following command:
 ```bash
 flutter run
 ```
-
-
-- Install dependencies: flutter pub get
-
-
-# Set up Firebase:
-- Create a Firebase project at Firebase Console.
-- Add an Android/iOS app to your Firebase project.
-- Download google-services.json (Android) or GoogleService-Info.plist (iOS) and place it in the respective directories.
-- Run:flutterfire configure
-
-
-
-
-## Configure News API:
-- Create a .env file in the root directory.
-- Add your News API key:NEWS_API_KEY=your_news_api_key_here
-
-
-
-
-- Run the app:flutter run
 
 
 
@@ -125,19 +115,22 @@ flutter run
 
 
 
-APK
+### APK
 Download the latest APK here. [Download](https://drive.google.com/file/d/16Pod7EtEnOGa22opjnUaEtcpU2h29x9H/view?usp=sharing)
 
-Project Structure
+### Project Structure
+```
 lib/
 ├── core/              # Core utilities, constants, and DI
 ├── data/              # Data models and repositories
 ├── presentation/      # UI and BLoC logic
 └── main.dart          # App entry point
+```
 
-Contributing
+## Contributing
 Feel free to fork this repository and submit pull requests. For major changes, please open an issue first to discuss.
-License
+
+## License
 This project is licensed under the MIT License - see the LICENSE.md file for details.
 
 
