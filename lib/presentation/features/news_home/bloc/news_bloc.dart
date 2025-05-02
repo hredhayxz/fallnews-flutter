@@ -12,15 +12,13 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
   final int _pageSize = 20;
   final ConnectivityChecker di = sl.get<ConnectivityChecker>();
 
-  NewsBloc() : _repository = GetNewsRepo(), super(NewsInitial()) {
+  NewsBloc() : _repository = GetNewsRepo(), super(const NewsInitial()) {
     on<FetchNewsEvent>((event, emit) async {
       if (state is NewsLoading && !event.isRefresh) return;
 
       try {
         if (event.isRefresh) {
           emit(const NewsLoading());
-        } else if (state is NewsLoaded && (state as NewsLoaded).hasReachedMax) {
-          return;
         } else if (state is NewsInitial) {
           emit(const NewsLoading());
         }
@@ -32,12 +30,14 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
 
         await result.fold(
           (failure) async {
+            final currentTotal = state.totalResults;
             if (await di.hasInternetConnection()) {
               emit(
                 NewsError(
                   failure,
                   articles: _getCurrentArticles(),
                   hasReachedMax: state.hasReachedMax,
+                  totalResults: currentTotal,
                 ),
               );
             } else {
@@ -47,6 +47,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
                   NewsLoaded(
                     articles: cachedNews,
                     hasReachedMax: state.hasReachedMax,
+                    totalResults: currentTotal,
                   ),
                 );
               }
@@ -54,25 +55,31 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
           },
           (newsData) {
             final newArticles = newsData.articles ?? [];
+            final totalResults = newsData.totalResults ?? 0;
 
             final updatedArticles =
                 event.isRefresh
                     ? newArticles
                     : [..._getCurrentArticles(), ...newArticles];
 
-            final hasReachedMax = newArticles.length < _pageSize;
+            // Only append new articles if they exist
+            final hasReachedMax = newArticles.isEmpty;
 
-            LocalDB.homeNews = updatedArticles;
+            if (newArticles.isNotEmpty) {
+              LocalDB.homeNews = updatedArticles;
+            }
 
             emit(
               NewsLoaded(
                 articles: updatedArticles,
                 hasReachedMax: hasReachedMax,
+                totalResults: totalResults,
               ),
             );
           },
         );
       } catch (e) {
+        final currentTotal = state.totalResults;
         final cachedNews = LocalDB.homeNews;
         if (await di.hasInternetConnection()) {
           emit(
@@ -80,6 +87,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
               e.toString(),
               articles: _getCurrentArticles(),
               hasReachedMax: state.hasReachedMax,
+              totalResults: currentTotal,
             ),
           );
         } else if (cachedNews.isNotEmpty) {
@@ -87,6 +95,7 @@ class NewsBloc extends Bloc<NewsEvent, NewsState> {
             NewsLoaded(
               articles: cachedNews,
               hasReachedMax: state.hasReachedMax,
+              totalResults: currentTotal,
             ),
           );
         }

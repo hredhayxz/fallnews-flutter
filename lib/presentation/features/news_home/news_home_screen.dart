@@ -33,17 +33,16 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
     if (isRefresh) {
       _currentPage = 1;
     }
-    context.read<NewsBloc>().add(FetchNewsEvent(page: _currentPage, isRefresh: isRefresh));
+    context.read<NewsBloc>().add(
+      FetchNewsEvent(page: _currentPage, isRefresh: isRefresh),
+    );
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 300) {
-      final state = context.read<NewsBloc>().state;
-      if (state is NewsLoaded && !state.hasReachedMax) {
-        _currentPage++;
-        _fetchNews();
-      }
+      _currentPage++;
+      _fetchNews();
     }
   }
 
@@ -66,9 +65,9 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
             ),
             onPressed: () {
               if (user == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please sign in')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Please sign in')));
                 Navigator.pushNamed(context, AppRoutes.login);
                 return;
               } else {
@@ -84,9 +83,9 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
             ),
             onPressed: () {
               if (user == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Please sign in')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Please sign in')));
                 Navigator.pushNamed(context, AppRoutes.login);
                 return;
               } else {
@@ -98,9 +97,11 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
       ),
       body: BlocBuilder<NewsBloc, NewsState>(
         builder: (context, state) {
-          if (state is NewsLoading) {
+          if (state is NewsLoading && state.articles.isEmpty) {
             return const HomeShimmerLoading();
-          } else if (state is NewsLoaded) {
+          } else if (state is NewsLoaded ||
+              (state is NewsLoading && state.articles.isNotEmpty)) {
+            final articles = state.articles;
             return RefreshIndicator(
               onRefresh: () async {
                 _fetchNews(isRefresh: true);
@@ -108,15 +109,14 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
               child: ListView.separated(
                 controller: _scrollController,
                 padding: EdgeInsets.all(AppDimens.r16),
-                itemCount: state.articles.length + 1,
+                itemCount: articles.length + 1,
+                // Always show loading indicator
                 separatorBuilder: (_, __) => SizedBox(height: AppDimens.r16),
                 itemBuilder: (_, index) {
-                  if (index < state.articles.length) {
-                    return HomeNewsCard(news: state.articles[index]);
+                  if (index < articles.length) {
+                    return HomeNewsCard(news: articles[index]);
                   } else {
-                    return state.hasReachedMax
-                        ? const SizedBox.shrink()
-                        : const Padding(
+                    return const Padding(
                       padding: EdgeInsets.symmetric(vertical: 24),
                       child: Center(child: CircularProgressIndicator()),
                     );
@@ -125,9 +125,17 @@ class _NewsHomeScreenState extends State<NewsHomeScreen> {
               ),
             );
           } else if (state is NewsError) {
-            return Padding(
-              padding: EdgeInsets.all(AppDimens.r16),
-              child: Center(child: Text('Error: ${state.message}')),
+            return RefreshIndicator(
+              onRefresh: () async {
+                _fetchNews(isRefresh: true);
+              },
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.all(AppDimens.r16),
+                  child: Center(child: Text('Error: ${state.message}')),
+                ),
+              ),
             );
           } else {
             return const Center(child: Text('No news found.'));
